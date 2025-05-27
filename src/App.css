@@ -56,7 +56,7 @@
   cursor: url('/lovable-uploads/1ee12429-d696-4db4-975b-686157f07662.png') 5 5, pointer !important;
 }
 
-/* Cursor sparkle effect */
+/* Cursor sparkle effect for pixel theme */
 .cursor-sparkle {
   pointer-events: none;
   position: fixed;
@@ -83,3 +83,32 @@
     transform: translate(-50%, -50%) scale(1.5) rotate(90deg);
   }
 }
+
+/* Flower bloom effect for soft theme */
+.flower-bloom-particle {
+  pointer-events: none;
+  position: fixed;
+  width: 10px; /* Initial size */
+  height: 10px;
+  background-color: #C5B4E3; /* Lavender color from your theme */
+  border-radius: 50%;
+  opacity: 0;
+  z-index: 9999; /* Same z-index as sparkles, but they won't overlap due to theme switching */
+  transform: translate(-50%, -50%); /* Center on cursor */
+  animation: flower-bloom-animation 1s ease-out forwards;
+}
+
+@keyframes flower-bloom-animation {
+  0% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.5); /* Bloom outwards */
+  }
+}
+
