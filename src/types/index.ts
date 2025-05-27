@@ -15,4 +15,8 @@ export interface HNItem extends HNStory {
   // Comments might have 'text' and 'parent'
   text?: string;
   parent?: number;
+  // Add deleted and dead properties, as API items can have these
+  deleted?: boolean;
+  dead?: boolean;
 }
+

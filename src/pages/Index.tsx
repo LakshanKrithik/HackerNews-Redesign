@@ -36,9 +36,16 @@ const Index = () => {
     queryKey: ['stories', currentStoryIds],
     queryFn: async () => {
       if (!currentStoryIds || currentStoryIds.length === 0) return [];
-      const storyPromises = currentStoryIds.map(id => fetchItem(id) as Promise<HNStory>);
-      const fetchedStories = await Promise.all(storyPromises);
-      return fetchedStories.filter(story => story && story.type === 'story' && !story.deleted && !story.dead);
+      // Fetch items as HNItem
+      const storyPromises = currentStoryIds.map(id => fetchItem(id));
+      // Fetched items will be of type HNItem[]
+      const fetchedItems: HNItem[] = await Promise.all(storyPromises);
+      // Filter for actual stories that are not deleted or dead
+      const validStories = fetchedItems.filter(
+        item => item && item.type === 'story' && !item.deleted && !item.dead
+      );
+      // The result is an array of items that conform to HNStory structure
+      return validStories as HNStory[];
     },
     enabled: !!currentStoryIds && currentStoryIds.length > 0,
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -102,7 +109,7 @@ const Index = () => {
               </span>
               <Button
                 onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
-                disabled={currentPage === totalPages - 1 || !stories || stories.length < STORIES_PER_PAGE}
+                disabled={currentPage === totalPages - 1 || !stories || (stories && stories.length < STORIES_PER_PAGE)}
                 variant="outline"
                 className="bg-hn-background text-hn-text hover:bg-hn-accent hover:text-hn-background border-hn-border shadow-pixel-sm hover:shadow-pixel-accent"
               >
@@ -117,3 +124,4 @@ const Index = () => {
 };
 
 export default Index;
+
