@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import CursorEffect from "./components/CursorEffect";
+import './App.css';
 
 const queryClient = new QueryClient();
 
@@ -14,6 +16,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <ThemeProvider>
+        <CursorEffect />
         <Toaster />
         <Sonner />
         <BrowserRouter>
