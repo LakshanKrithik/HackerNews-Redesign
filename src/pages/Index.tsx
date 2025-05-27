@@ -32,7 +32,7 @@ const Index = () => {
 
   const currentStoryIds = storyIds?.slice(currentPage * STORIES_PER_PAGE, (currentPage + 1) * STORIES_PER_PAGE);
 
-  const { data: stories, isLoading: isLoadingStories, error: errorStories } = useQuery<HNStory[], Error>({
+  const { data: stories = [], isLoading: isLoadingStories, error: errorStories } = useQuery<HNStory[], Error>({
     queryKey: ['stories', currentStoryIds],
     queryFn: async () => {
       if (!currentStoryIds || currentStoryIds.length === 0) return [];
@@ -109,7 +109,7 @@ const Index = () => {
               </span>
               <Button
                 onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
-                disabled={currentPage === totalPages - 1 || !stories || (stories && stories.length < STORIES_PER_PAGE)}
+                disabled={currentPage === totalPages - 1 || !stories || stories.length < STORIES_PER_PAGE}
                 variant="outline"
                 className="bg-hn-background text-hn-text hover:bg-hn-accent hover:text-hn-background border-hn-border shadow-pixel-sm hover:shadow-pixel-accent"
               >
@@ -124,4 +124,3 @@ const Index = () => {
 };
 
 export default Index;
-
