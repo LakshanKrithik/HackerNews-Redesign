@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -40,8 +42,6 @@
     --glitch-color2: #00FFE7;
     --glitch-color3: #FFFC00;
   }
-
-  /* No separate .dark class needed as the base theme is dark */
 }
 
 @layer base {
@@ -49,33 +49,59 @@
     @apply border-hn-border; /* Use custom border color */
   }
 
-  body {
+  [data-theme='pixel'] body {
     @apply bg-hn-background text-hn-text font-sans;
-    /* Subtle noise texture for pixel screen grain */
     background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232A2A2A' fill-opacity='0.1' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
   }
-
-  ::selection {
-    @apply bg-hn-accent text-hn-background;
+  
+  [data-theme='soft'] body {
+    @apply bg-soft-background text-soft-text font-poppins;
+    background-image: 
+      radial-gradient(circle at 100% 0%, rgba(197, 180, 227, 0.2) 0%, transparent 25%),
+      radial-gradient(circle at 0% 80%, rgba(197, 180, 227, 0.1) 0%, transparent 20%);
   }
 
-  /* Custom scrollbar (basic version, full pixel style is complex) */
-  ::-webkit-scrollbar {
+  [data-theme='pixel'] ::selection {
+    @apply bg-hn-accent text-hn-background;
+  }
+  
+  [data-theme='soft'] ::selection {
+    @apply bg-lavender text-white;
+  }
+
+  /* Custom scrollbar for pixel theme */
+  [data-theme='pixel'] ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
-  ::-webkit-scrollbar-track {
+  [data-theme='pixel'] ::-webkit-scrollbar-track {
     @apply bg-hn-border;
   }
-  ::-webkit-scrollbar-thumb {
+  [data-theme='pixel'] ::-webkit-scrollbar-thumb {
     @apply bg-hn-accent;
   }
-  ::-webkit-scrollbar-thumb:hover {
+  [data-theme='pixel'] ::-webkit-scrollbar-thumb:hover {
     @apply bg-opacity-80;
+  }
+  
+  /* Custom scrollbar for soft theme */
+  [data-theme='soft'] ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  [data-theme='soft'] ::-webkit-scrollbar-track {
+    @apply bg-soft-border;
+  }
+  [data-theme='soft'] ::-webkit-scrollbar-thumb {
+    @apply bg-lavender rounded-full;
+  }
+  [data-theme='soft'] ::-webkit-scrollbar-thumb:hover {
+    @apply bg-soft-accent bg-opacity-80;
   }
 }
 
 @layer components {
+  /* Pixel theme components */
   .glitch-text-hover {
     @apply relative inline-block;
   }
@@ -103,5 +129,26 @@
   }
   .pixel-border-accent {
     @apply border border-hn-accent shadow-pixel-accent;
+  }
+  
+  /* Soft UI components */
+  .glassmorphic {
+    @apply bg-white bg-opacity-80 backdrop-filter backdrop-blur-lg border border-white border-opacity-30 shadow-soft;
+  }
+  
+  .neumorphic {
+    @apply bg-soft-background shadow-soft border border-white border-opacity-50;
+  }
+  
+  .neumorphic-inset {
+    @apply bg-soft-background shadow-soft-inner border border-soft-border;
+  }
+  
+  .soft-gradient-text {
+    @apply bg-gradient-to-r from-lavender to-soft-accent bg-clip-text text-transparent;
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-soft-hover;
   }
 }

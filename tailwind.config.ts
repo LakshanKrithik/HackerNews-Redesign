@@ -2,7 +2,7 @@
 import type { Config } from "tailwindcss";
 
 export default {
-	darkMode: ["class"], // Using 'class' for potential future dark mode toggle, though primary theme is dark.
+	darkMode: ["class"], 
 	content: [
 		"./pages/**/*.{ts,tsx}",
 		"./components/**/*.{ts,tsx}",
@@ -22,19 +22,31 @@ export default {
 			fontFamily: {
         'pixel': ['"Press Start 2P"', 'monospace'],
         'sans': ['Inter', 'sans-serif'],
+        'poppins': ['Poppins', 'sans-serif'],
       },
 			colors: {
+        // Pixel theme colors
         'hn-background': '#0D0D0D',
         'hn-text': '#E6E6E6',
-        'hn-accent': '#FF3C00', // Hacker News orange-red
-        'hn-accent-secondary': '#00FFE7', // Aqua cyan
+        'hn-accent': '#FF3C00',
+        'hn-accent-secondary': '#00FFE7',
         'hn-border': '#2A2A2A',
         'hn-glitch-yellow': '#FFFC00',
+        
+        // Soft UI theme colors
+        'soft-background': '#F9F7F3', 
+        'soft-text': '#2E2E2E',
+        'soft-text-secondary': '#666666',
+        'soft-accent': '#9F7AEA', // Deep purple
+        'soft-accent-secondary': '#63B3ED', // Soft blue
+        'soft-border': '#E2E8F0',
+        'lavender': '#C5B4E3',
+        
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
-				background: 'hsl(var(--background))', // Keep shadcn defaults but we'll override with hn-background
-				foreground: 'hsl(var(--foreground))', // Keep shadcn defaults but override with hn-text
+				background: 'hsl(var(--background))',
+				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
@@ -49,7 +61,7 @@ export default {
 				},
 				muted: {
 					DEFAULT: 'hsl(var(--muted))',
-          foreground: '#999999', // For metadata
+          foreground: '#999999',
 				},
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
@@ -65,14 +77,19 @@ export default {
 				},
 			},
 			borderRadius: {
-				lg: '0px', // Pixel art often has sharp edges
+				lg: '0px',
 				md: '0px',
-				sm: '0px'
+				sm: '0px',
+        'soft': '1rem',
+        'pill': '9999px',
 			},
 			boxShadow: {
         'pixel': '2px 2px 0px #2A2A2A',
         'pixel-sm': '1px 1px 0px #2A2A2A',
         'pixel-accent': '2px 2px 0px #FF3C00',
+        'soft': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03)',
+        'soft-hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        'soft-inner': 'inset 2px 2px 5px rgba(0, 0, 0, 0.05), inset -2px -2px 5px rgba(255, 255, 255, 0.8)',
       },
 			keyframes: {
 				'accordion-down': {
@@ -125,6 +142,10 @@ export default {
           '75%': { textShadow: '-1px 0 #00FFE7, 1px 0 #FF3C00' },
           '100%': { textShadow: '1px 0 #FF3C00, -1px 0 #00FFE7' },
         },
+        'float': {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -136,6 +157,7 @@ export default {
         'pixel-spinner-delay-3': 'pixel-spinner 1s 0.4s infinite ease-in-out',
         'flicker': 'flicker 1.5s infinite alternate',
         'text-shadow-glitch': 'text-shadow-glitch 0.3s linear infinite',
+        'float': 'float 3s ease-in-out infinite',
 			}
 		}
 	},
