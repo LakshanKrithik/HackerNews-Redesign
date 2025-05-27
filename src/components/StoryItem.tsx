@@ -1,7 +1,6 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { HNStory } from '@/types';
-import { MessageCircle, ThumbsUp, User, Clock } from 'lucide-react';
+import { MessageCircle, ThumbsUp, User, Clock, ThumbsDown, Fire, Rocket } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 
 interface StoryItemProps {
@@ -12,6 +11,7 @@ interface StoryItemProps {
 const StoryItem: React.FC<StoryItemProps> = ({ story, index }) => {
   const { theme } = useTheme();
   const domain = story.url ? new URL(story.url).hostname.replace('www.', '') : null;
+  const [activeAnimation, setActiveAnimation] = useState<string | null>(null);
 
   const timeAgo = (timestamp: number): string => {
     const now = Math.floor(Date.now() / 1000);
@@ -24,6 +24,21 @@ const StoryItem: React.FC<StoryItemProps> = ({ story, index }) => {
     const days = Math.floor(hours / 24);
     return `${days}d ago`;
   };
+
+  const handleReactionClick = (reactionName: string, storyId: number) => {
+    console.log(`Reacted with ${reactionName} to story ${storyId}`);
+    setActiveAnimation(`${storyId}-${reactionName}`);
+    setTimeout(() => {
+      setActiveAnimation(null);
+    }, 300);
+  };
+
+  const reactions = [
+    { name: 'like', icon: ThumbsUp, label: 'Like' },
+    { name: 'dislike', icon: ThumbsDown, label: 'Dislike' },
+    { name: 'fire', icon: Fire, label: 'Fire Hot' },
+    { name: 'rocket', icon: Rocket, label: 'To The Moon!' },
+  ];
 
   // Pixel theme styles
   if (theme === 'pixel') {
@@ -66,6 +81,25 @@ const StoryItem: React.FC<StoryItemProps> = ({ story, index }) => {
                   <MessageCircle size={12} className="mr-1 text-hn-accent-secondary" /> {story.descendants} comments
                 </a>
               )}
+            </div>
+            {/* Reaction Emojis Section */}
+            <div className="mt-2 flex items-center space-x-2">
+              {reactions.map(reaction => (
+                <button
+                  key={reaction.name}
+                  title={reaction.label}
+                  onClick={() => handleReactionClick(reaction.name, story.id)}
+                  className={`p-1 rounded hover:bg-hn-accent/20 transition-colors duration-150 ${
+                    activeAnimation === `${story.id}-${reaction.name}` ? 'animate-icon-glitch' : ''
+                  }`}
+                  aria-label={reaction.label}
+                >
+                  <reaction.icon 
+                    size={16} 
+                    className="text-hn-text group-hover:text-hn-accent" 
+                  />
+                </button>
+              ))}
             </div>
           </div>
         </div>
