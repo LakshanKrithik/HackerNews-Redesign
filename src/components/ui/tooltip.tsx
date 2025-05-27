@@ -1,9 +1,15 @@
+
 import * as React from "react"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
 import { cn } from "@/lib/utils"
 
-const TooltipProvider = TooltipPrimitive.Provider
+// Wrap TooltipPrimitive.Provider in a new component
+const CustomTooltipProvider: React.FC<TooltipPrimitive.TooltipProviderProps> = (props) => {
+  return <TooltipPrimitive.Provider {...props} />;
+};
+// It's good practice to set a displayName for debugging purposes.
+CustomTooltipProvider.displayName = "TooltipProvider";
 
 const Tooltip = TooltipPrimitive.Root
 
@@ -25,4 +31,5 @@ const TooltipContent = React.forwardRef<
 ))
 TooltipContent.displayName = TooltipPrimitive.Content.displayName
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+export { Tooltip, TooltipTrigger, TooltipContent, CustomTooltipProvider as TooltipProvider }
+
