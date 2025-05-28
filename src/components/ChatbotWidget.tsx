@@ -1,7 +1,5 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'framer-motion';
-import { useDropzone } from 'react-dropzone';
 import { MessageCircle, X, Send, Loader2 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import { Button } from '@/components/ui/button';
@@ -28,6 +26,7 @@ const ChatbotWidget: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [articleContext, setArticleContext] = useState<ArticleContext | null>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragOver, setIsDragOver] = useState(false);
   
   const dragControls = useDragControls();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -55,9 +54,21 @@ const ChatbotWidget: React.FC = () => {
     }
   }, [isOpen, articleContext]);
 
-  const onDrop = (acceptedFiles: File[], event: any) => {
-    // Check if we're dropping from a story card
-    const draggedData = event.dataTransfer?.getData('application/json');
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    const draggedData = e.dataTransfer?.getData('application/json');
     if (draggedData) {
       try {
         const story: HNStory = JSON.parse(draggedData);
@@ -72,14 +83,6 @@ const ChatbotWidget: React.FC = () => {
       }
     }
   };
-
-  const { getRootProps, isDragActive } = useDropzone({
-    onDrop,
-    noClick: true,
-    accept: {
-      'application/json': []
-    }
-  });
 
   const sendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
@@ -145,15 +148,20 @@ const ChatbotWidget: React.FC = () => {
   };
 
   return (
-    <div {...getRootProps()} className="fixed bottom-4 right-4 z-50">
+    <div 
+      className="fixed bottom-4 right-4 z-50"
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       {/* Drag indicator when hovering */}
-      {isDragActive && (
+      {isDragOver && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           className={`absolute inset-0 rounded-full border-4 border-dashed ${
             theme === 'pixel' ? 'border-hn-accent' : 'border-lavender'
-          } bg-black bg-opacity-20 flex items-center justify-center`}
+          } bg-black bg-opacity-20 flex items-center justify-center z-10`}
         >
           <span className={`text-lg font-bold ${
             theme === 'pixel' ? 'text-hn-accent' : 'text-lavender'
@@ -304,7 +312,7 @@ const ChatbotWidget: React.FC = () => {
           theme === 'pixel'
             ? 'bg-hn-accent hover:bg-hn-accent/90 text-hn-background shadow-pixel-accent'
             : 'glassmorphic hover:bg-lavender hover:bg-opacity-20 text-lavender hover:text-white'
-        } ${isDragActive ? 'scale-110' : 'scale-100'}`}
+        } ${isDragOver ? 'scale-110' : 'scale-100'}`}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         drag
