@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { HNStory } from '@/types';
-import { MessageCircle, ThumbsUp, User, Clock, ThumbsDown, Fire, Rocket } from 'lucide-react';
+import { MessageCircle, ThumbsUp, User, Clock, ThumbsDown, Flame, Rocket } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 
 interface StoryItemProps {
@@ -36,7 +37,7 @@ const StoryItem: React.FC<StoryItemProps> = ({ story, index }) => {
   const reactions = [
     { name: 'like', icon: ThumbsUp, label: 'Like' },
     { name: 'dislike', icon: ThumbsDown, label: 'Dislike' },
-    { name: 'fire', icon: Fire, label: 'Fire Hot' },
+    { name: 'fire', icon: Flame, label: 'Fire Hot' },
     { name: 'rocket', icon: Rocket, label: 'To The Moon!' },
   ];
 
