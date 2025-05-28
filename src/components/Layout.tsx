@@ -2,6 +2,7 @@
 import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import ChatbotWidget from './ChatbotWidget';
 import { useTheme } from '@/context/ThemeContext';
 
 interface LayoutProps {
@@ -21,6 +22,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {children}
       </main>
       <Footer />
+      <ChatbotWidget />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useTheme } from '@/context/ThemeContext';
 import { useInterests } from '@/context/InterestsContext';
 import { Settings } from 'lucide-react';
+import DraggableStoryItem from '@/components/DraggableStoryItem';
 
 const fetchStoryIds = async (): Promise<number[]> => {
   const res = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
@@ -140,11 +141,16 @@ const Index = () => {
           }>
             {stories && stories.length > 0 ? (
               stories.map((story, index) => (
-                <StoryItem 
+                <DraggableStoryItem 
                   key={story.id} 
                   story={story} 
-                  index={currentPage * STORIES_PER_PAGE + index} 
-                />
+                  index={currentPage * STORIES_PER_PAGE + index}
+                >
+                  <StoryItem 
+                    story={story} 
+                    index={currentPage * STORIES_PER_PAGE + index} 
+                  />
+                </DraggableStoryItem>
               ))
             ) : (
               <p className={`text-center py-10 ${theme === 'pixel' ? 'text-muted-foreground' : 'text-soft-text-secondary'}`}>
