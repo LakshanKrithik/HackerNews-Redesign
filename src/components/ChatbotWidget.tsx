@@ -73,7 +73,7 @@ const ChatbotWidget: React.FC = () => {
     }
   };
 
-  const { getRootProps, isDragOver } = useDropzone({
+  const { getRootProps, isDragActive } = useDropzone({
     onDrop,
     noClick: true,
     accept: {
@@ -147,7 +147,7 @@ const ChatbotWidget: React.FC = () => {
   return (
     <div {...getRootProps()} className="fixed bottom-4 right-4 z-50">
       {/* Drag indicator when hovering */}
-      {isDragOver && (
+      {isDragActive && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -304,7 +304,7 @@ const ChatbotWidget: React.FC = () => {
           theme === 'pixel'
             ? 'bg-hn-accent hover:bg-hn-accent/90 text-hn-background shadow-pixel-accent'
             : 'glassmorphic hover:bg-lavender hover:bg-opacity-20 text-lavender hover:text-white'
-        } ${isDragOver ? 'scale-110' : 'scale-100'}`}
+        } ${isDragActive ? 'scale-110' : 'scale-100'}`}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         drag
