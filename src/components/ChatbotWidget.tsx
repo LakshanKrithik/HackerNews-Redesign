@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'framer-motion';
-import { MessageCircle, X, Send, Loader2 } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Zap, Eye } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { HNStory } from '@/types';
@@ -27,6 +27,7 @@ const ChatbotWidget: React.FC = () => {
   const [articleContext, setArticleContext] = useState<ArticleContext | null>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isDropping, setIsDropping] = useState(false);
   
   const dragControls = useDragControls();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -67,20 +68,29 @@ const ChatbotWidget: React.FC = () => {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
+    setIsDropping(true);
     
     const draggedData = e.dataTransfer?.getData('application/json');
     if (draggedData) {
       try {
         const story: HNStory = JSON.parse(draggedData);
-        setArticleContext({
-          title: story.title,
-          url: story.url
-        });
-        setIsOpen(true);
-        setMessages([]);
+        
+        // Simulate absorption animation delay
+        setTimeout(() => {
+          setArticleContext({
+            title: story.title,
+            url: story.url
+          });
+          setIsOpen(true);
+          setMessages([]);
+          setIsDropping(false);
+        }, 800);
       } catch (error) {
         console.error('Error parsing dropped data:', error);
+        setIsDropping(false);
       }
+    } else {
+      setIsDropping(false);
     }
   };
 
@@ -154,20 +164,60 @@ const ChatbotWidget: React.FC = () => {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {/* Drag indicator when hovering */}
+      {/* Enhanced drag indicator with magnetism effect */}
       {isDragOver && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
+          animate={{ 
+            opacity: 1, 
+            scale: [1, 1.1, 1],
+            rotate: [0, 5, -5, 0]
+          }}
+          transition={{
+            scale: { duration: 1, repeat: Infinity },
+            rotate: { duration: 2, repeat: Infinity }
+          }}
           className={`absolute inset-0 rounded-full border-4 border-dashed ${
             theme === 'pixel' ? 'border-hn-accent' : 'border-lavender'
           } bg-black bg-opacity-20 flex items-center justify-center z-10`}
+          style={{
+            boxShadow: theme === 'pixel' 
+              ? '0 0 30px #FF3C00, 0 0 60px rgba(255, 60, 0, 0.3)'
+              : '0 0 30px #C5B4E3, 0 0 60px rgba(197, 180, 227, 0.3)'
+          }}
         >
-          <span className={`text-lg font-bold ${
+          <motion.span 
+            className={`text-lg font-bold ${
+              theme === 'pixel' ? 'text-hn-accent' : 'text-lavender'
+            }`}
+            animate={{ y: [-2, 2, -2] }}
+            transition={{ duration: 1, repeat: Infinity }}
+          >
+            🧲 Drop Story Here!
+          </motion.span>
+        </motion.div>
+      )}
+
+      {/* Absorption animation */}
+      {isDropping && (
+        <motion.div
+          initial={{ scale: 1, opacity: 1 }}
+          animate={{ 
+            scale: [1, 1.2, 0],
+            opacity: [1, 0.8, 0],
+            rotate: [0, 180, 360]
+          }}
+          transition={{ duration: 0.8 }}
+          className="absolute inset-0 rounded-full z-20 flex items-center justify-center"
+          style={{
+            background: theme === 'pixel' 
+              ? 'radial-gradient(circle, #FF3C00 0%, transparent 70%)'
+              : 'radial-gradient(circle, #C5B4E3 0%, transparent 70%)'
+          }}
+        >
+          <Zap className={`w-8 h-8 ${
             theme === 'pixel' ? 'text-hn-accent' : 'text-lavender'
-          }`}>
-            Drop Story Here!
-          </span>
+          }`} />
         </motion.div>
       )}
 
@@ -196,13 +246,29 @@ const ChatbotWidget: React.FC = () => {
             } flex items-center justify-between cursor-move`}
             onPointerDown={(e) => dragControls.start(e)}>
               <div className="flex items-center space-x-2">
-                <div className={`w-3 h-3 rounded-full ${
-                  theme === 'pixel' ? 'bg-hn-accent animate-pulse' : 'bg-lavender animate-pulse'
-                }`} />
+                <motion.div 
+                  className={`w-3 h-3 rounded-full ${
+                    theme === 'pixel' ? 'bg-hn-accent' : 'bg-lavender'
+                  }`}
+                  animate={{ 
+                    scale: isDragOver ? [1, 1.5, 1] : 1,
+                    opacity: isDragOver ? [1, 0.5, 1] : 1
+                  }}
+                  transition={{ duration: 0.5, repeat: isDragOver ? Infinity : 0 }}
+                />
                 <span className={`font-bold ${
                   theme === 'pixel' ? 'text-hn-text font-pixel' : 'text-soft-text'
                 }`}>
                   Patch {articleContext && '📰'}
+                  {isDragOver && (
+                    <motion.span
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="ml-2"
+                    >
+                      <Eye className="inline w-4 h-4" />
+                    </motion.span>
+                  )}
                 </span>
               </div>
               <Button
@@ -217,9 +283,13 @@ const ChatbotWidget: React.FC = () => {
 
             {/* Article Context Banner */}
             {articleContext && (
-              <div className={`p-2 text-xs ${
-                theme === 'pixel' ? 'bg-hn-accent text-hn-background' : 'bg-lavender text-white'
-              } flex items-center justify-between`}>
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`p-2 text-xs ${
+                  theme === 'pixel' ? 'bg-hn-accent text-hn-background' : 'bg-lavender text-white'
+                } flex items-center justify-between`}
+              >
                 <span className="truncate">📰 {articleContext.title}</span>
                 <Button
                   variant="ghost"
@@ -229,14 +299,16 @@ const ChatbotWidget: React.FC = () => {
                 >
                   <X size={12} />
                 </Button>
-              </div>
+              </motion.div>
             )}
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {messages.map((message) => (
-                <div
+                <motion.div
                   key={message.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
                   className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
                 >
                   <div
@@ -252,7 +324,7 @@ const ChatbotWidget: React.FC = () => {
                   >
                     {message.text}
                   </div>
-                </div>
+                </motion.div>
               ))}
               
               {/* Loading indicator */}
@@ -305,25 +377,60 @@ const ChatbotWidget: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Floating Button */}
+      {/* Enhanced Floating Button */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
         className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ${
           theme === 'pixel'
             ? 'bg-hn-accent hover:bg-hn-accent/90 text-hn-background shadow-pixel-accent'
             : 'glassmorphic hover:bg-lavender hover:bg-opacity-20 text-lavender hover:text-white'
-        } ${isDragOver ? 'scale-110' : 'scale-100'}`}
+        }`}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
+        animate={{
+          scale: isDragOver ? [1, 1.15, 1] : 1,
+          rotate: isDragOver ? [0, 10, -10, 0] : 0,
+        }}
+        transition={{
+          scale: { duration: 0.5, repeat: isDragOver ? Infinity : 0 },
+          rotate: { duration: 1, repeat: isDragOver ? Infinity : 0 }
+        }}
+        style={{
+          boxShadow: isDragOver 
+            ? theme === 'pixel'
+              ? '0 0 25px #FF3C00, 0 0 50px rgba(255, 60, 0, 0.3)'
+              : '0 0 25px #C5B4E3, 0 0 50px rgba(197, 180, 227, 0.3)'
+            : undefined
+        }}
         drag
         dragMomentum={false}
         dragElastic={0.1}
       >
         <MessageCircle size={24} className={isLoading ? 'animate-pulse' : ''} />
         {articleContext && (
-          <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+          <motion.div 
+            className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          >
             <span className="text-xs">📰</span>
-          </div>
+          </motion.div>
+        )}
+        
+        {/* Glowing ring when drag is active */}
+        {isDragOver && (
+          <motion.div
+            className="absolute inset-0 rounded-full border-2"
+            style={{
+              borderColor: theme === 'pixel' ? '#FF3C00' : '#C5B4E3'
+            }}
+            animate={{
+              scale: [1, 1.4, 1],
+              opacity: [0.7, 0.3, 0.7]
+            }}
+            transition={{ duration: 1, repeat: Infinity }}
+          />
         )}
       </motion.button>
     </div>
