@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { HNStory } from '@/types';
 import { useTheme } from '@/context/ThemeContext';
+import { useShelf } from '@/context/ShelfContext';
 import { Upload } from 'lucide-react';
 
 interface DraggableStoryItemProps {
@@ -13,6 +14,7 @@ interface DraggableStoryItemProps {
 
 const DraggableStoryItem: React.FC<DraggableStoryItemProps> = ({ story, children }) => {
   const { theme } = useTheme();
+  const { addToShelf } = useShelf();
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragStart = (e: React.DragEvent) => {
@@ -37,6 +39,31 @@ const DraggableStoryItem: React.FC<DraggableStoryItemProps> = ({ story, children
   const handleDragEnd = () => {
     setIsDragging(false);
   };
+
+  // Listen for drops on the shelf area
+  React.useEffect(() => {
+    const handleGlobalDrop = (e: DragEvent) => {
+      const target = e.target as Element;
+      const shelfElement = target?.closest('[data-shelf-drop-zone]');
+      
+      if (shelfElement && isDragging) {
+        try {
+          const storyData = e.dataTransfer?.getData('application/json');
+          if (storyData) {
+            const droppedStory = JSON.parse(storyData);
+            if (droppedStory.id === story.id) {
+              addToShelf(story);
+            }
+          }
+        } catch (error) {
+          console.error('Error handling shelf drop:', error);
+        }
+      }
+    };
+
+    document.addEventListener('drop', handleGlobalDrop);
+    return () => document.removeEventListener('drop', handleGlobalDrop);
+  }, [isDragging, story, addToShelf]);
 
   return (
     <div

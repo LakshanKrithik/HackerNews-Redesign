@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
 import { HNStory } from '@/types';
-import { MessageCircle, ThumbsUp, User, Clock, ThumbsDown, Flame, Rocket } from 'lucide-react';
+import { MessageCircle, ThumbsUp, User, Clock, ThumbsDown, Flame, Rocket, Heart } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
+import { useShelf } from '@/context/ShelfContext';
+import { motion } from 'framer-motion';
 
 interface StoryItemProps {
   story: HNStory;
@@ -11,8 +13,10 @@ interface StoryItemProps {
 
 const StoryItem: React.FC<StoryItemProps> = ({ story, index }) => {
   const { theme } = useTheme();
+  const { addToShelf, removeFromShelf, isInShelf } = useShelf();
   const domain = story.url ? new URL(story.url).hostname.replace('www.', '') : null;
   const [activeAnimation, setActiveAnimation] = useState<string | null>(null);
+  const isBookmarked = isInShelf(story.id);
 
   const timeAgo = (timestamp: number): string => {
     const now = Math.floor(Date.now() / 1000);
@@ -34,6 +38,14 @@ const StoryItem: React.FC<StoryItemProps> = ({ story, index }) => {
     }, 300);
   };
 
+  const handleBookmarkClick = () => {
+    if (isBookmarked) {
+      removeFromShelf(story.id);
+    } else {
+      addToShelf(story);
+    }
+  };
+
   const reactions = [
     { name: 'like', icon: ThumbsUp, label: 'Like' },
     { name: 'dislike', icon: ThumbsDown, label: 'Dislike' },
@@ -44,7 +56,27 @@ const StoryItem: React.FC<StoryItemProps> = ({ story, index }) => {
   // Pixel theme styles
   if (theme === 'pixel') {
     return (
-      <article className="py-3 px-2 border-b border-hn-border last:border-b-0 hover:bg-white/5 transition-colors duration-150 group">
+      <article className="py-3 px-2 border-b border-hn-border last:border-b-0 hover:bg-white/5 transition-colors duration-150 group relative">
+        {/* Heart Icon - Top Right */}
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={handleBookmarkClick}
+          className={`
+            absolute top-2 right-2 p-1 rounded opacity-0 group-hover:opacity-100 transition-all duration-200
+            ${isBookmarked 
+              ? 'text-red-500 opacity-100' 
+              : 'text-muted-foreground hover:text-red-500'
+            }
+          `}
+          title={isBookmarked ? 'Remove from Shelf' : 'Add to Shelf'}
+        >
+          <Heart 
+            size={16} 
+            className={isBookmarked ? 'fill-current' : ''} 
+          />
+        </motion.button>
+
         <div className="flex items-baseline">
           <span className="text-muted-foreground text-sm mr-2 w-6 text-right">{index + 1}.</span>
           <div>
@@ -111,7 +143,27 @@ const StoryItem: React.FC<StoryItemProps> = ({ story, index }) => {
   // Soft UI theme styles
   return (
     <article className="mb-4 last:mb-0">
-      <div className="bg-white rounded-xl p-4 shadow-soft hover:shadow-soft-hover transform hover:-translate-y-1 transition-all duration-300">
+      <div className="bg-white rounded-xl p-4 shadow-soft hover:shadow-soft-hover transform hover:-translate-y-1 transition-all duration-300 relative group">
+        {/* Heart Icon - Top Right */}
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={handleBookmarkClick}
+          className={`
+            absolute top-3 right-3 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200
+            ${isBookmarked 
+              ? 'text-red-500 opacity-100 bg-red-50' 
+              : 'text-soft-text-secondary hover:text-red-500 hover:bg-red-50'
+            }
+          `}
+          title={isBookmarked ? 'Remove from Shelf' : 'Add to Shelf'}
+        >
+          <Heart 
+            size={16} 
+            className={isBookmarked ? 'fill-current' : ''} 
+          />
+        </motion.button>
+
         <div className="flex items-start">
           <div className="flex flex-col items-center mr-4">
             <div className="bg-soft-background rounded-full w-8 h-8 flex items-center justify-center font-poppins text-soft-text">
@@ -125,7 +177,7 @@ const StoryItem: React.FC<StoryItemProps> = ({ story, index }) => {
             )}
           </div>
           
-          <div className="flex-1">
+          <div className="flex-1 pr-8">
             <a
               href={story.url || `https://news.ycombinator.com/item?id=${story.id}`}
               target="_blank"

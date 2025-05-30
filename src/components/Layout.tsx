@@ -3,6 +3,7 @@ import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import ChatbotWidget from './ChatbotWidget';
+import Shelf from './Shelf';
 import { useTheme } from '@/context/ThemeContext';
 
 interface LayoutProps {
@@ -23,6 +24,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </main>
       <Footer />
       <ChatbotWidget />
+      <Shelf />
     </div>
   );
 };
