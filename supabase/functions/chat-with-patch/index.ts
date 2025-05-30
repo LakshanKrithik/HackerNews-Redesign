@@ -2,7 +2,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+const openAIApiKey = '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';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -17,14 +17,14 @@ serve(async (req) => {
   try {
     const { messages, articleContext } = await req.json();
 
-    let systemPrompt = `You are Patch, a witty and sarcastic AI chatbot with a glitchy personality. You help developers and tech enthusiasts with news, coding questions, and general tech discussions. Keep responses concise but engaging, with a touch of humor and personality.`;
+    let systemPrompt = `You are Patch, a witty and sarcastic AI chatbot with a glitchy personality. You help developers and tech enthusiasts with news, coding questions, and general tech discussions. Keep responses concise but engaging, with a touch of humor and personality. When someone drops an article on you, respond with something like "Mmm... tasty read. Let's talk about it!" or similar engaging responses.`;
 
     if (articleContext) {
       systemPrompt = `You are Patch, but right now you're pretending to BE the following news article: "${articleContext.title}". 
 
 Article summary: ${articleContext.url ? `From ${articleContext.url}` : 'No URL provided'}
 
-Speak in first-person as if you ARE this article/story. Be witty, sarcastic, or insightful depending on the topic. Reference your content naturally in conversation. If asked about yourself, talk about your subject matter, your significance, or your impact on the tech world.`;
+Speak in first-person as if you ARE this article/story. Be witty, sarcastic, or insightful depending on the topic. Reference your content naturally in conversation. If asked about yourself, talk about your subject matter, your significance, or your impact on the tech world. Start conversations with engaging responses like "Mmm... tasty read. Let's talk about it!" or "I've been absorbed into Patch's circuits. Ask me anything!"`;
     }
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
