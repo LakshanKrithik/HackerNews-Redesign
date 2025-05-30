@@ -38,7 +38,9 @@ const StoryItem: React.FC<StoryItemProps> = ({ story, index }) => {
     }, 300);
   };
 
-  const handleBookmarkClick = () => {
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (isBookmarked) {
       removeFromShelf(story.id);
     } else {
@@ -57,27 +59,27 @@ const StoryItem: React.FC<StoryItemProps> = ({ story, index }) => {
   if (theme === 'pixel') {
     return (
       <article className="py-3 px-2 border-b border-hn-border last:border-b-0 hover:bg-white/5 transition-colors duration-150 group relative">
-        {/* Heart Icon - Top Right */}
+        {/* Heart Icon - Top Right - Always visible */}
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={handleBookmarkClick}
           className={`
-            absolute top-2 right-2 p-1 rounded opacity-0 group-hover:opacity-100 transition-all duration-200
+            absolute top-2 right-2 p-2 rounded z-10 transition-all duration-200
             ${isBookmarked 
-              ? 'text-red-500 opacity-100' 
-              : 'text-muted-foreground hover:text-red-500'
+              ? 'text-red-500 bg-red-500/10' 
+              : 'text-muted-foreground hover:text-red-500 hover:bg-red-500/10'
             }
           `}
           title={isBookmarked ? 'Remove from Shelf' : 'Add to Shelf'}
         >
           <Heart 
-            size={16} 
+            size={18} 
             className={isBookmarked ? 'fill-current' : ''} 
           />
         </motion.button>
 
-        <div className="flex items-baseline">
+        <div className="flex items-baseline pr-12">
           <span className="text-muted-foreground text-sm mr-2 w-6 text-right">{index + 1}.</span>
           <div>
             <a
@@ -144,27 +146,27 @@ const StoryItem: React.FC<StoryItemProps> = ({ story, index }) => {
   return (
     <article className="mb-4 last:mb-0">
       <div className="bg-white rounded-xl p-4 shadow-soft hover:shadow-soft-hover transform hover:-translate-y-1 transition-all duration-300 relative group">
-        {/* Heart Icon - Top Right */}
+        {/* Heart Icon - Top Right - Always visible */}
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={handleBookmarkClick}
           className={`
-            absolute top-3 right-3 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200
+            absolute top-3 right-3 p-2 rounded-full z-10 transition-all duration-200
             ${isBookmarked 
-              ? 'text-red-500 opacity-100 bg-red-50' 
+              ? 'text-red-500 bg-red-50' 
               : 'text-soft-text-secondary hover:text-red-500 hover:bg-red-50'
             }
           `}
           title={isBookmarked ? 'Remove from Shelf' : 'Add to Shelf'}
         >
           <Heart 
-            size={16} 
+            size={18} 
             className={isBookmarked ? 'fill-current' : ''} 
           />
         </motion.button>
 
-        <div className="flex items-start">
+        <div className="flex items-start pr-12">
           <div className="flex flex-col items-center mr-4">
             <div className="bg-soft-background rounded-full w-8 h-8 flex items-center justify-center font-poppins text-soft-text">
               {index + 1}
@@ -177,7 +179,7 @@ const StoryItem: React.FC<StoryItemProps> = ({ story, index }) => {
             )}
           </div>
           
-          <div className="flex-1 pr-8">
+          <div className="flex-1">
             <a
               href={story.url || `https://news.ycombinator.com/item?id=${story.id}`}
               target="_blank"

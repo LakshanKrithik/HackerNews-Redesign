@@ -35,27 +35,24 @@ const Shelf: React.FC = () => {
 
   return (
     <>
-      {/* Desktop Shelf - Fixed Right Side */}
+      {/* Desktop Shelf - Fixed Right Side with Toggle */}
       <div className="hidden lg:block fixed right-4 top-1/2 -translate-y-1/2 z-40">
-        <motion.div
-          initial={{ x: 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          className={`
-            ${theme === 'pixel' 
-              ? 'bg-hn-background border-2 border-hn-accent shadow-pixel-accent' 
-              : 'bg-white/80 backdrop-blur-md border border-white/30 shadow-2xl'
-            }
-            rounded-xl p-4 w-80 max-h-96
-          `}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-        >
-          <div className="flex items-center justify-between mb-3">
+        {!isOpen ? (
+          // Collapsed state - just a button
+          <motion.button
+            onClick={() => setIsOpen(true)}
+            className={`
+              p-3 rounded-l-xl
+              ${theme === 'pixel' 
+                ? 'bg-hn-background border-2 border-hn-accent shadow-pixel-accent text-hn-accent' 
+                : 'bg-white/80 backdrop-blur-md border border-white/30 shadow-lg text-lavender'
+              }
+              hover:scale-105 transition-transform
+            `}
+            whileHover={{ x: -4 }}
+          >
             <div className="flex items-center gap-2">
-              <BookOpen size={20} className={theme === 'pixel' ? 'text-hn-accent' : 'text-lavender'} />
-              <h3 className={`font-semibold ${theme === 'pixel' ? 'text-hn-text font-pixel' : 'text-soft-text font-poppins'}`}>
-                Shelf
-              </h3>
+              <BookOpen size={20} />
               {savedCount > 0 && (
                 <span className={`
                   px-2 py-1 rounded-full text-xs font-medium
@@ -68,56 +65,101 @@ const Shelf: React.FC = () => {
                 </span>
               )}
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsAIOpen(!isAIOpen)}
-              className={theme === 'pixel' ? 'text-hn-accent hover:bg-hn-accent/20' : 'text-lavender hover:bg-lavender/20'}
-            >
-              <Sparkles size={16} />
-            </Button>
-          </div>
-
-          <ScrollArea className="h-64">
-            <AnimatePresence>
-              {savedArticles.length === 0 ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className={`text-center py-8 ${theme === 'pixel' ? 'text-muted-foreground' : 'text-soft-text-secondary'}`}
+          </motion.button>
+        ) : (
+          // Expanded state - full shelf
+          <motion.div
+            initial={{ x: 100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            className={`
+              ${theme === 'pixel' 
+                ? 'bg-hn-background border-2 border-hn-accent shadow-pixel-accent' 
+                : 'bg-white/80 backdrop-blur-md border border-white/30 shadow-2xl'
+              }
+              rounded-xl p-4 w-80 max-h-96
+            `}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <BookOpen size={20} className={theme === 'pixel' ? 'text-hn-accent' : 'text-lavender'} />
+                <h3 className={`font-semibold ${theme === 'pixel' ? 'text-hn-text font-pixel' : 'text-soft-text font-poppins'}`}>
+                  Shelf
+                </h3>
+                {savedCount > 0 && (
+                  <span className={`
+                    px-2 py-1 rounded-full text-xs font-medium
+                    ${theme === 'pixel' 
+                      ? 'bg-hn-accent text-hn-background' 
+                      : 'bg-lavender text-white'
+                    }
+                  `}>
+                    {savedCount}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsAIOpen(!isAIOpen)}
+                  className={theme === 'pixel' ? 'text-hn-accent hover:bg-hn-accent/20' : 'text-lavender hover:bg-lavender/20'}
                 >
-                  <BookOpen size={32} className="mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">Drop articles here to save for later</p>
-                </motion.div>
-              ) : (
-                savedArticles.map((article, index) => (
+                  <Sparkles size={16} />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsOpen(false)}
+                  className={theme === 'pixel' ? 'text-hn-accent hover:bg-hn-accent/20' : 'text-lavender hover:bg-lavender/20'}
+                >
+                  <X size={16} />
+                </Button>
+              </div>
+            </div>
+
+            <ScrollArea className="h-64">
+              <AnimatePresence>
+                {savedArticles.length === 0 ? (
                   <motion.div
-                    key={article.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, x: 100 }}
-                    transition={{ delay: index * 0.1 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className={`text-center py-8 ${theme === 'pixel' ? 'text-muted-foreground' : 'text-soft-text-secondary'}`}
                   >
-                    <ShelfItem article={article} />
+                    <BookOpen size={32} className="mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">Drop articles here to save for later</p>
                   </motion.div>
-                ))
+                ) : (
+                  savedArticles.map((article, index) => (
+                    <motion.div
+                      key={article.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, x: 100 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <ShelfItem article={article} />
+                    </motion.div>
+                  ))
+                )}
+              </AnimatePresence>
+            </ScrollArea>
+
+            <AnimatePresence>
+              {isAIOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="mt-3 pt-3 border-t border-white/20"
+                >
+                  <ShelfAI />
+                </motion.div>
               )}
             </AnimatePresence>
-          </ScrollArea>
-
-          <AnimatePresence>
-            {isAIOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="mt-3 pt-3 border-t border-white/20"
-              >
-                <ShelfAI />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+          </motion.div>
+        )}
       </div>
 
       {/* Mobile Shelf - Bottom Collapsible */}

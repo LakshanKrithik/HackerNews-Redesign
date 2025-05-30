@@ -40,43 +40,33 @@ const DraggableStoryItem: React.FC<DraggableStoryItemProps> = ({ story, children
     setIsDragging(false);
   };
 
-  // Listen for drops on the shelf area
-  React.useEffect(() => {
-    const handleGlobalDrop = (e: DragEvent) => {
-      const target = e.target as Element;
-      const shelfElement = target?.closest('[data-shelf-drop-zone]');
-      
-      if (shelfElement && isDragging) {
-        try {
-          const storyData = e.dataTransfer?.getData('application/json');
-          if (storyData) {
-            const droppedStory = JSON.parse(storyData);
-            if (droppedStory.id === story.id) {
-              addToShelf(story);
-            }
-          }
-        } catch (error) {
-          console.error('Error handling shelf drop:', error);
-        }
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    try {
+      const storyData = e.dataTransfer.getData('application/json');
+      if (storyData) {
+        const droppedStory = JSON.parse(storyData);
+        addToShelf(droppedStory);
       }
-    };
-
-    document.addEventListener('drop', handleGlobalDrop);
-    return () => document.removeEventListener('drop', handleGlobalDrop);
-  }, [isDragging, story, addToShelf]);
+    } catch (error) {
+      console.error('Error handling drop:', error);
+    }
+  };
 
   return (
     <div
       draggable
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onDrop={handleDrop}
+      onDragOver={(e) => e.preventDefault()}
       className={`cursor-grab active:cursor-grabbing transition-all duration-200 ${
         theme === 'pixel' ? 'hover:shadow-pixel-accent' : 'hover:shadow-soft-hover'
       }`}
     >
       <motion.div
         animate={{
-          scale: isDragging ? 1.08 : 1,
+          scale: isDragging ? 1.02 : 1,
           y: isDragging ? [0, -2, 0] : 0,
         }}
         transition={{
