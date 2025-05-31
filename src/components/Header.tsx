@@ -1,11 +1,25 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
 import { useTheme } from '@/context/ThemeContext';
 
 const Header: React.FC = () => {
   const { theme } = useTheme();
+  const location = useLocation();
+  
+  const navItems = [
+    { path: '/new', label: 'New' },
+    { path: '/top', label: 'Top' },
+    { path: '/ask', label: 'Ask' },
+    { path: '/show', label: 'Show' },
+    { path: '/jobs', label: 'Jobs' }
+  ];
+
+  const isActive = (path: string) => {
+    if (path === '/top' && location.pathname === '/') return true;
+    return location.pathname === path;
+  };
   
   return (
     <header className={`
@@ -38,17 +52,22 @@ const Header: React.FC = () => {
               ? 'font-pixel text-xs sm:text-sm' 
               : 'font-poppins text-sm sm:text-base'}
           `}>
-            {['new', 'top', 'ask', 'show', 'jobs'].map((item) => (
+            {navItems.map((item) => (
               <Link
-                key={item}
-                to={`/${item}`}
-                className={theme === 'pixel'
-                  ? "text-hn-text hover:text-hn-accent glitch-text-hover"
-                  : "text-soft-text hover:text-soft-accent transition-colors"
-                }
-                data-text={item.charAt(0).toUpperCase() + item.slice(1)}
+                key={item.path}
+                to={item.path}
+                className={`transition-colors ${
+                  theme === 'pixel'
+                    ? isActive(item.path)
+                      ? "text-hn-accent glitch-text-hover font-bold"
+                      : "text-hn-text hover:text-hn-accent glitch-text-hover"
+                    : isActive(item.path)
+                      ? "text-soft-accent font-semibold"
+                      : "text-soft-text hover:text-soft-accent"
+                }`}
+                data-text={item.label}
               >
-                {item.charAt(0).toUpperCase() + item.slice(1)}
+                {item.label}
               </Link>
             ))}
           </nav>
