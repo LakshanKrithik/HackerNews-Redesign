@@ -39,11 +39,9 @@ const Header: React.FC = () => {
               : 'font-poppins text-sm sm:text-base'}
           `}>
             {['new', 'top', 'ask', 'show', 'jobs'].map((item) => (
-              <a
+              <Link
                 key={item}
-                href={`https://news.ycombinator.com/${item}`}
-                target="_blank"
-                rel="noopener noreferrer"
+                to={`/${item}`}
                 className={theme === 'pixel'
                   ? "text-hn-text hover:text-hn-accent glitch-text-hover"
                   : "text-soft-text hover:text-soft-accent transition-colors"
@@ -51,7 +49,7 @@ const Header: React.FC = () => {
                 data-text={item.charAt(0).toUpperCase() + item.slice(1)}
               >
                 {item.charAt(0).toUpperCase() + item.slice(1)}
-              </a>
+              </Link>
             ))}
           </nav>
           
