@@ -32,7 +32,7 @@ So, I gave it a **modern, fun, and functional** makeover. Welcome to **HackerNew
    npm run dev
    ```
 
-Or just skip all of that and visit the live site here 👉 [Click to Visit](https://your-vercel-url.vercel.app)
+Or just skip all of that and visit the live site here 👉 [Click to Visit]([https://your-vercel-url.vercel.app](https://hacker-news-redesign-eight.vercel.app/))
 
 ---
 
