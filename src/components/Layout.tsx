@@ -10,9 +10,10 @@ import { useMemeMode } from '@/context/MemeModeContext';
 
 interface LayoutProps {
   children: React.ReactNode;
+  onMemeCreated?: (meme: any) => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, onMemeCreated }) => {
   const { theme } = useTheme();
   const { isMemeMode } = useMemeMode();
   
@@ -29,7 +30,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </main>
       <Footer />
       {!isMemeMode && <ChatbotWidget />}
-      {isMemeMode && <CreateMemeButton />}
+      {isMemeMode && <CreateMemeButton onMemeCreated={onMemeCreated} />}
       <Shelf />
     </div>
   );

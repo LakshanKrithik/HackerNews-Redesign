@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { HNStory } from '@/types';
 import { Heart, Share2, Bookmark, MessageCircle } from 'lucide-react';
@@ -7,7 +6,12 @@ import { Button } from '@/components/ui/button';
 import { useShelf } from '@/context/ShelfContext';
 
 interface MemeCardProps {
-  story: HNStory;
+  story: HNStory & { 
+    isMeme?: boolean; 
+    templateName?: string; 
+    topText?: string; 
+    bottomText?: string; 
+  };
   index: number;
 }
 
@@ -27,10 +31,21 @@ const MemeCard: React.FC<MemeCardProps> = ({ story, index }) => {
   ];
 
   const getMemeTemplate = () => {
+    // If it's a created meme with a URL, use that
+    if (story.isMeme && story.url) {
+      return story.url;
+    }
+    // Otherwise use template from array
     return memeTemplates[index % memeTemplates.length];
   };
 
   const generateMemeCaption = (title: string) => {
+    // If it's a created meme, show the actual text
+    if (story.isMeme && story.topText && story.bottomText) {
+      return `${story.topText} / ${story.bottomText}`;
+    }
+    
+    // Otherwise generate a caption
     const captions = [
       `When ${title.toLowerCase().slice(0, 50)}... 💀`,
       `POV: You're reading "${title.slice(0, 40)}..." 🤯`,
@@ -68,7 +83,9 @@ const MemeCard: React.FC<MemeCardProps> = ({ story, index }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
       whileHover={{ y: -5, rotate: Math.random() * 4 - 2 }}
-      className="bg-gradient-to-br from-white to-blue-50 rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-purple-100"
+      className={`bg-gradient-to-br from-white to-blue-50 rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-purple-100 ${
+        story.isMeme ? 'ring-2 ring-green-200 bg-gradient-to-br from-green-50 to-blue-50' : ''
+      }`}
     >
       <div className="flex gap-6">
         {/* Meme Image */}
@@ -86,7 +103,12 @@ const MemeCard: React.FC<MemeCardProps> = ({ story, index }) => {
         <div className="flex-1">
           <div className="flex justify-between items-start mb-3">
             <h3 className="font-poppins font-bold text-lg text-purple-800 leading-tight">
-              {story.title}
+              {story.isMeme ? `${story.templateName} Meme` : story.title}
+              {story.isMeme && (
+                <span className="ml-2 inline-block px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                  NEW
+                </span>
+              )}
             </h3>
             <motion.button
               whileHover={{ scale: 1.1 }}

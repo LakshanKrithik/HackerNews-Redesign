@@ -81,6 +81,7 @@ const STORIES_PER_PAGE = 20;
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState(0);
+  const [createdMemes, setCreatedMemes] = useState<any[]>([]);
   const { theme } = useTheme();
   const { isMemeMode } = useMemeMode();
   const { selectedTopics, scoreStory } = useInterests();
@@ -98,6 +99,19 @@ const Index = () => {
     // Smooth scroll to top when switching views
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [location.pathname]);
+
+  // Clear created memes when switching out of meme mode
+  useEffect(() => {
+    if (!isMemeMode) {
+      setCreatedMemes([]);
+    }
+  }, [isMemeMode]);
+
+  const handleMemeCreated = (newMeme: any) => {
+    setCreatedMemes(prev => [newMeme, ...prev]);
+    // Scroll to top to show the new meme
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const { data: storyIds, isLoading: isLoadingIds, error: errorIds } = useQuery<number[], Error>({
     queryKey: [storyType],
@@ -149,7 +163,7 @@ const Index = () => {
   if (errorIds || errorStories) {
     const error = errorIds || errorStories;
     return (
-      <Layout>
+      <Layout onMemeCreated={handleMemeCreated}>
         <div className={`text-center py-10 ${
           isMemeMode 
             ? 'text-purple-600 font-poppins' 
@@ -164,8 +178,11 @@ const Index = () => {
   
   const totalPages = storyIds ? Math.ceil(storyIds.length / STORIES_PER_PAGE) : 0;
 
+  // Combine created memes with fetched stories for meme mode
+  const displayItems = isMemeMode ? [...createdMemes, ...(stories || [])] : (stories || []);
+
   return (
-    <Layout>
+    <Layout onMemeCreated={handleMemeCreated}>
       <div className="flex justify-between items-center mb-6">
         {isMemeMode ? (
           <div className="text-center flex-1">
@@ -231,17 +248,17 @@ const Index = () => {
                   : "bg-transparent"
               }
             >
-              {stories && stories.length > 0 ? (
+              {displayItems && displayItems.length > 0 ? (
                 isMemeMode ? (
-                  stories.map((story, index) => (
+                  displayItems.map((story, index) => (
                     <MemeCard 
                       key={story.id}
                       story={story} 
-                      index={currentPage * STORIES_PER_PAGE + index}
+                      index={index}
                     />
                   ))
                 ) : (
-                  stories.map((story, index) => (
+                  displayItems.map((story, index) => (
                     <motion.div
                       key={story.id}
                       initial={{ opacity: 0, y: 10 }}
@@ -272,7 +289,7 @@ const Index = () => {
             </motion.div>
           </AnimatePresence>
           
-          {totalPages > 1 && (
+          {totalPages > 1 && !isMemeMode && (
             <div className={`mt-8 flex justify-center items-center space-x-2 ${
               isMemeMode ? 'font-poppins' : theme === 'pixel' ? 'font-pixel' : 'font-poppins'
             }`}>

@@ -5,11 +5,17 @@ import { Plus, X, Upload, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { useMemeMode } from '@/context/MemeModeContext';
 
-const CreateMemeButton: React.FC = () => {
+interface CreateMemeButtonProps {
+  onMemeCreated?: (meme: any) => void;
+}
+
+const CreateMemeButton: React.FC<CreateMemeButtonProps> = ({ onMemeCreated }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [topText, setTopText] = useState('');
   const [bottomText, setBottomText] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
 
   const memeTemplates = [
     { id: 1, name: 'Distracted Boyfriend', url: 'https://i.imgflip.com/1bij.jpg' },
@@ -28,6 +34,42 @@ const CreateMemeButton: React.FC = () => {
     const suggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
     setTopText(suggestion.top);
     setBottomText(suggestion.bottom);
+  };
+
+  const handleCreateMeme = () => {
+    if (!selectedTemplate || !topText || !bottomText) {
+      alert('Please select a template and add both top and bottom text!');
+      return;
+    }
+
+    const template = memeTemplates.find(t => t.id === selectedTemplate);
+    if (!template) return;
+
+    const newMeme = {
+      id: Date.now(),
+      title: `${topText} - ${bottomText}`,
+      url: template.url,
+      by: 'Anonymous Memer',
+      time: Math.floor(Date.now() / 1000),
+      score: Math.floor(Math.random() * 100) + 1,
+      descendants: Math.floor(Math.random() * 50),
+      type: 'story',
+      templateName: template.name,
+      topText,
+      bottomText,
+      isMeme: true
+    };
+
+    // Call the callback to add meme to the feed
+    if (onMemeCreated) {
+      onMemeCreated(newMeme);
+    }
+
+    // Reset form and close dialog
+    setTopText('');
+    setBottomText('');
+    setSelectedTemplate(null);
+    setIsOpen(false);
   };
 
   return (
@@ -65,16 +107,28 @@ const CreateMemeButton: React.FC = () => {
                   <motion.div
                     key={template.id}
                     whileHover={{ scale: 1.05 }}
-                    className="relative cursor-pointer rounded-2xl overflow-hidden border-4 border-purple-200 hover:border-purple-400"
+                    onClick={() => setSelectedTemplate(template.id)}
+                    className={`relative cursor-pointer rounded-2xl overflow-hidden border-4 transition-all ${
+                      selectedTemplate === template.id 
+                        ? 'border-purple-500 ring-4 ring-purple-200' 
+                        : 'border-purple-200 hover:border-purple-400'
+                    }`}
                   >
                     <img 
                       src={template.url} 
                       alt={template.name}
                       className="w-full h-24 object-cover"
                     />
-                    <div className="absolute bottom-0 left-0 right-0 bg-purple-600 bg-opacity-90 text-white text-xs font-medium p-2">
+                    <div className={`absolute bottom-0 left-0 right-0 text-white text-xs font-medium p-2 ${
+                      selectedTemplate === template.id ? 'bg-purple-600' : 'bg-purple-600 bg-opacity-90'
+                    }`}>
                       {template.name}
                     </div>
+                    {selectedTemplate === template.id && (
+                      <div className="absolute top-2 right-2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs">✓</span>
+                      </div>
+                    )}
                   </motion.div>
                 ))}
               </div>
@@ -125,8 +179,9 @@ const CreateMemeButton: React.FC = () => {
             </div>
 
             <Button
-              onClick={() => setIsOpen(false)}
-              className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white rounded-2xl font-poppins font-bold py-4 text-lg"
+              onClick={handleCreateMeme}
+              disabled={!selectedTemplate || !topText || !bottomText}
+              className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white rounded-2xl font-poppins font-bold py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Create Meme! 🎉
             </Button>
