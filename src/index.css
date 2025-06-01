@@ -98,6 +98,15 @@
   [data-theme='soft'] ::-webkit-scrollbar-thumb:hover {
     @apply bg-soft-accent bg-opacity-80;
   }
+
+  /* Hide scrollbar for mobile navigation */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @layer components {
@@ -150,5 +159,35 @@
   
   .hover-lift {
     @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-soft-hover;
+  }
+
+  /* Responsive utilities */
+  .container {
+    @apply w-full mx-auto px-2 sm:px-4 lg:px-6;
+  }
+  
+  /* Mobile-first responsive text */
+  .responsive-text-sm {
+    @apply text-xs sm:text-sm;
+  }
+  
+  .responsive-text-base {
+    @apply text-sm sm:text-base;
+  }
+  
+  .responsive-text-lg {
+    @apply text-base sm:text-lg;
+  }
+  
+  .responsive-text-xl {
+    @apply text-lg sm:text-xl;
+  }
+  
+  .responsive-text-2xl {
+    @apply text-xl sm:text-2xl;
+  }
+  
+  .responsive-text-3xl {
+    @apply text-2xl sm:text-3xl;
   }
 }

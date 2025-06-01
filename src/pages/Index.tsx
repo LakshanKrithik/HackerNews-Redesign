@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
@@ -164,13 +165,13 @@ const Index = () => {
     const error = errorIds || errorStories;
     return (
       <Layout onMemeCreated={handleMemeCreated}>
-        <div className={`text-center py-10 ${
+        <div className={`text-center py-6 sm:py-10 px-2 ${
           isMemeMode 
             ? 'text-purple-600 font-poppins' 
             : theme === 'pixel' ? 'text-hn-accent font-pixel' : 'text-soft-accent font-poppins'
         }`}>
-          <p>Error loading {isMemeMode ? 'memes' : 'stories'}: {error?.message}</p>
-          <p>Please try refreshing the page.</p>
+          <p className="text-sm sm:text-base">Error loading {isMemeMode ? 'memes' : 'stories'}: {error?.message}</p>
+          <p className="text-sm sm:text-base">Please try refreshing the page.</p>
         </div>
       </Layout>
     );
@@ -183,27 +184,27 @@ const Index = () => {
 
   return (
     <Layout onMemeCreated={handleMemeCreated}>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-4">
         {isMemeMode ? (
           <div className="text-center flex-1">
-            <h1 className="font-poppins font-bold text-4xl sm:text-5xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+            <h1 className="font-poppins font-bold text-2xl sm:text-3xl lg:text-4xl xl:text-5xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
               {pageTitle} 😂
             </h1>
-            <p className="text-purple-600 max-w-xl mx-auto text-lg">
+            <p className="text-purple-600 max-w-xl mx-auto text-sm sm:text-base lg:text-lg px-2">
               {pageDescription} • Where tech news meets meme magic ✨
             </p>
           </div>
         ) : theme === 'pixel' ? (
-          <h1 className="font-pixel text-2xl sm:text-3xl text-hn-accent animate-flicker">
+          <h1 className="font-pixel text-xl sm:text-2xl lg:text-3xl text-hn-accent animate-flicker">
             {pageTitle}
-            {selectedTopics.length > 0 && <span className="text-sm ml-2">({selectedTopics.length} interests)</span>}
+            {selectedTopics.length > 0 && <span className="text-xs sm:text-sm ml-2">({selectedTopics.length} interests)</span>}
           </h1>
         ) : (
-          <div className="text-center flex-1">
-            <h1 className="font-poppins font-bold text-3xl sm:text-4xl bg-gradient-to-r from-lavender to-soft-accent bg-clip-text text-transparent mb-2">
+          <div className="text-center sm:text-left flex-1">
+            <h1 className="font-poppins font-bold text-2xl sm:text-3xl lg:text-4xl bg-gradient-to-r from-lavender to-soft-accent bg-clip-text text-transparent mb-2">
               {pageTitle}
             </h1>
-            <p className="text-soft-text-secondary max-w-xl mx-auto">
+            <p className="text-soft-text-secondary max-w-xl mx-auto sm:mx-0 text-sm sm:text-base px-2 sm:px-0">
               {selectedTopics.length > 0 
                 ? `Personalized feed based on ${selectedTopics.length} selected interests`
                 : pageDescription
@@ -217,14 +218,15 @@ const Index = () => {
             asChild
             variant="outline"
             size="sm"
-            className={theme === 'pixel' 
+            className={`shrink-0 ${theme === 'pixel' 
               ? "bg-hn-background text-hn-text hover:bg-hn-accent hover:text-hn-background border-hn-border shadow-pixel-sm" 
               : "bg-white text-soft-text hover:bg-lavender hover:text-white border-soft-border rounded-full shadow-soft"
-            }
+            }`}
           >
             <a href="/settings">
-              <Settings size={16} className="mr-2" />
-              Settings
+              <Settings size={14} className="sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Settings</span>
+              <span className="sm:hidden">⚙️</span>
             </a>
           </Button>
         )}
@@ -242,7 +244,7 @@ const Index = () => {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
               className={isMemeMode 
-                ? "space-y-6"
+                ? "space-y-4 sm:space-y-6"
                 : theme === 'pixel' 
                   ? "bg-hn-background border border-hn-border shadow-pixel"
                   : "bg-transparent"
@@ -278,7 +280,7 @@ const Index = () => {
                   ))
                 )
               ) : (
-                <p className={`text-center py-10 ${
+                <p className={`text-center py-6 sm:py-10 px-2 text-sm sm:text-base ${
                   isMemeMode 
                     ? 'text-purple-600' 
                     : theme === 'pixel' ? 'text-muted-foreground' : 'text-soft-text-secondary'
@@ -290,13 +292,14 @@ const Index = () => {
           </AnimatePresence>
           
           {totalPages > 1 && !isMemeMode && (
-            <div className={`mt-8 flex justify-center items-center space-x-2 ${
+            <div className={`mt-6 sm:mt-8 flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-4 ${
               isMemeMode ? 'font-poppins' : theme === 'pixel' ? 'font-pixel' : 'font-poppins'
             }`}>
               <Button
                 onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
                 disabled={currentPage === 0}
                 variant="outline"
+                size="sm"
                 className={isMemeMode
                   ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 border-purple-300 rounded-full font-bold"
                   : theme === 'pixel' 
@@ -306,7 +309,7 @@ const Index = () => {
               >
                 Prev
               </Button>
-              <span className={`text-sm ${
+              <span className={`text-xs sm:text-sm px-2 ${
                 isMemeMode 
                   ? 'text-purple-600 font-medium' 
                   : theme === 'pixel' ? 'text-muted-foreground' : 'text-soft-text-secondary'
@@ -317,6 +320,7 @@ const Index = () => {
                 onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
                 disabled={currentPage === totalPages - 1 || !stories || stories.length < STORIES_PER_PAGE}
                 variant="outline"
+                size="sm"
                 className={isMemeMode
                   ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 border-purple-300 rounded-full font-bold"
                   : theme === 'pixel' 

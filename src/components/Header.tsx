@@ -26,16 +26,18 @@ const Header: React.FC = () => {
   
   return (
     <header className={`
-      sticky top-0 z-50 p-4 border-b transition-all duration-300
+      sticky top-0 z-50 p-2 sm:p-4 border-b transition-all duration-300
       ${isMemeMode 
         ? 'bg-gradient-to-r from-blue-50 to-yellow-50 border-purple-200 shadow-lg' 
         : theme === 'pixel' 
           ? 'bg-hn-background bg-opacity-80 backdrop-blur-sm border-hn-border' 
           : 'bg-soft-background bg-opacity-90 backdrop-blur-md border-soft-border shadow-soft'}
     `}>
-      <div className="container mx-auto flex items-center justify-between">
+      <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 max-w-7xl">
+        {/* Logo and Title */}
         <Link to="/" className={`
-          font-${isMemeMode ? 'poppins' : theme === 'pixel' ? 'pixel' : 'poppins'} text-2xl 
+          font-${isMemeMode ? 'poppins' : theme === 'pixel' ? 'pixel' : 'poppins'} 
+          text-xl sm:text-2xl shrink-0
           ${isMemeMode 
             ? 'text-purple-600 font-bold transform hover:scale-105 transition-transform' 
             : theme === 'pixel' ? 'text-hn-text relative group' : 'text-soft-text font-semibold'}
@@ -54,51 +56,54 @@ const Header: React.FC = () => {
           )}
         </Link>
         
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto">
           {/* Meme Mode Toggle */}
-          <div className="flex items-center space-x-3 bg-white/50 backdrop-blur-sm rounded-full px-4 py-2 border border-purple-200">
-            <span className={`text-sm font-medium transition-colors ${!isMemeMode ? 'text-purple-600' : 'text-gray-400'}`}>
-              🧠 HackerNews
+          <div className="flex items-center gap-2 bg-white/50 backdrop-blur-sm rounded-full px-3 py-2 border border-purple-200 min-w-0">
+            <span className={`text-xs sm:text-sm font-medium transition-colors truncate ${!isMemeMode ? 'text-purple-600' : 'text-gray-400'}`}>
+              🧠 HN
             </span>
             <Switch 
               checked={isMemeMode} 
               onCheckedChange={toggleMemeMode}
-              className="data-[state=checked]:bg-purple-500 data-[state=unchecked]:bg-gray-300"
+              className="data-[state=checked]:bg-purple-500 data-[state=unchecked]:bg-gray-300 shrink-0"
             />
-            <span className={`text-sm font-medium transition-colors ${isMemeMode ? 'text-purple-600' : 'text-gray-400'}`}>
-              😂 HackerMemes
+            <span className={`text-xs sm:text-sm font-medium transition-colors truncate ${isMemeMode ? 'text-purple-600' : 'text-gray-400'}`}>
+              😂 Memes
             </span>
           </div>
           
           {!isMemeMode && (
-            <nav className={`
-              space-x-3 sm:space-x-4 
-              ${theme === 'pixel' 
-                ? 'font-pixel text-xs sm:text-sm' 
-                : 'font-poppins text-sm sm:text-base'}
-            `}>
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`transition-colors ${
-                    theme === 'pixel'
-                      ? isActive(item.path)
-                        ? "text-hn-accent glitch-text-hover font-bold"
-                        : "text-hn-text hover:text-hn-accent glitch-text-hover"
-                      : isActive(item.path)
-                        ? "text-soft-accent font-semibold"
-                        : "text-soft-text hover:text-soft-accent"
-                  }`}
-                  data-text={item.label}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+            <>
+              {/* Navigation - Mobile Scrollable */}
+              <nav className={`
+                flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-1 sm:pb-0 w-full sm:w-auto
+                ${theme === 'pixel' 
+                  ? 'font-pixel text-xs sm:text-sm' 
+                  : 'font-poppins text-sm sm:text-base'}
+              `}>
+                {navItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`transition-colors whitespace-nowrap px-2 py-1 rounded ${
+                      theme === 'pixel'
+                        ? isActive(item.path)
+                          ? "text-hn-accent glitch-text-hover font-bold"
+                          : "text-hn-text hover:text-hn-accent glitch-text-hover"
+                        : isActive(item.path)
+                          ? "text-soft-accent font-semibold"
+                          : "text-soft-text hover:text-soft-accent"
+                    }`}
+                    data-text={item.label}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+              
+              <ThemeToggle />
+            </>
           )}
-          
-          {!isMemeMode && <ThemeToggle />}
         </div>
       </div>
     </header>
