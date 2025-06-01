@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { HNStory } from '@/types';
 import { MessageCircle, ThumbsUp, User, Clock, ThumbsDown, Flame, Rocket, Heart } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
+import { useMemeMode } from '@/context/MemeModeContext';
 import { useShelf } from '@/context/ShelfContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';

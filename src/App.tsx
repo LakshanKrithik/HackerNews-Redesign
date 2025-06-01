@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
+import { MemeModeProvider } from "./context/MemeModeContext";
 import { InterestsProvider } from "./context/InterestsContext";
 import { ShelfProvider } from "./context/ShelfContext";
 import Index from "./pages/Index";
@@ -19,26 +20,28 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <ThemeProvider>
-        <InterestsProvider>
-          <ShelfProvider>
-            <CursorEffect />
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/new" element={<Index />} />
-                <Route path="/top" element={<Index />} />
-                <Route path="/ask" element={<Index />} />
-                <Route path="/show" element={<Index />} />
-                <Route path="/jobs" element={<Index />} />
-                <Route path="/settings" element={<Settings />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </ShelfProvider>
-        </InterestsProvider>
+        <MemeModeProvider>
+          <InterestsProvider>
+            <ShelfProvider>
+              <CursorEffect />
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/new" element={<Index />} />
+                  <Route path="/top" element={<Index />} />
+                  <Route path="/ask" element={<Index />} />
+                  <Route path="/show" element={<Index />} />
+                  <Route path="/jobs" element={<Index />} />
+                  <Route path="/settings" element={<Settings />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </ShelfProvider>
+          </InterestsProvider>
+        </MemeModeProvider>
       </ThemeProvider>
     </TooltipProvider>
   </QueryClientProvider>
