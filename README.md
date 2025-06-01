@@ -1,20 +1,18 @@
+# 🚀 HackerNews Redesign
 
-
-HackerNews Redesign 🚀
 HackerNews has been one of the most important platforms for tech enthusiasts, developers, and startup communities to share and discover the latest in technology. But let’s be honest — the UI feels outdated and uninspiring.
 
-So, I gave it a modern, fun, and functional makeover. Welcome to HackerNews Redesign ✨
+So, I gave it a **modern, fun, and functional** makeover. Welcome to **HackerNews Redesign** ✨
+
 
 ---
 
-Sure! Here's that part alone in markdown:
-
-````markdown
 ## 🔧 How to Run the Project Locally
 
 1. **Clone the repository**
    ```bash
    git clone <your-repo-link>
+
 
 2. **Navigate to the project directory**
 
@@ -35,7 +33,7 @@ Sure! Here's that part alone in markdown:
    ```
 
 Or just skip all of that and visit the live site here 👉 [Click to Visit](https://your-vercel-url.vercel.app)
-
+````
 ---
 
 ## 🛠 Tech Stack
@@ -80,6 +78,6 @@ Or just skip all of that and visit the live site here 👉 [Click to Visit](http
 * `npm run dev` is for **local development only**
 * In production (on Vercel), the project runs on a **built version**, not dev mode
 
----
+```
 
 
