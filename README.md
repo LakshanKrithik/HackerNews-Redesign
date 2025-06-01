@@ -73,10 +73,6 @@ Or just skip all of that and visit the live site here 👉 [Click to Visit](http
 
 ---
 
-## ⚙️ Notes
-
-* `npm run dev` is for **local development only**
-* In production (on Vercel), the project runs on a **built version**, not dev mode
 
 
 
