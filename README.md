@@ -33,7 +33,7 @@ So, I gave it a **modern, fun, and functional** makeover. Welcome to **HackerNew
    ```
 
 Or just skip all of that and visit the live site here 👉 [Click to Visit](https://your-vercel-url.vercel.app)
-````
+
 ---
 
 ## 🛠 Tech Stack
@@ -78,6 +78,6 @@ Or just skip all of that and visit the live site here 👉 [Click to Visit](http
 * `npm run dev` is for **local development only**
 * In production (on Vercel), the project runs on a **built version**, not dev mode
 
-```
+
 
 
