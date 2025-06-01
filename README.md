@@ -23,7 +23,7 @@ So, I gave it a **modern, fun, and functional** makeover. Welcome to **HackerNew
 3. **Install dependencies**
 
    ```bash
-   npm install
+   npm i
    ```
 
 4. **Start development server**
