@@ -2,8 +2,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const openAIApiKey = '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';
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -15,6 +13,12 @@ serve(async (req) => {
   }
 
   try {
+    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+    
+    if (!openAIApiKey) {
+      throw new Error('OpenAI API key not found in environment variables');
+    }
+
     const { messages, articleContext } = await req.json();
 
     let systemPrompt = `You are Patch, a witty and sarcastic AI chatbot with a glitchy personality. You help developers and tech enthusiasts with news, coding questions, and general tech discussions. Keep responses concise but engaging, with a touch of humor and personality. When someone drops an article on you, respond with something like "Mmm... tasty read. Let's talk about it!" or similar engaging responses.`;
