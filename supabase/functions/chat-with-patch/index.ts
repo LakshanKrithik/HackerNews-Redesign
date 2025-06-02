@@ -15,11 +15,23 @@ serve(async (req) => {
   try {
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
     
+    console.log('API Key exists:', !!openAIApiKey);
+    console.log('API Key length:', openAIApiKey?.length || 0);
+    console.log('API Key starts with sk-:', openAIApiKey?.startsWith('sk-') || false);
+    
     if (!openAIApiKey) {
+      console.error('OpenAI API key not found in environment variables');
       throw new Error('OpenAI API key not found in environment variables');
     }
 
+    if (!openAIApiKey.startsWith('sk-')) {
+      console.error('Invalid OpenAI API key format');
+      throw new Error('Invalid OpenAI API key format - must start with sk-');
+    }
+
     const { messages, articleContext } = await req.json();
+    console.log('Received request with messages:', messages?.length || 0);
+    console.log('Article context:', !!articleContext);
 
     let systemPrompt = `You are Patch, a witty and sarcastic AI chatbot with a glitchy personality. You help developers and tech enthusiasts with news, coding questions, and general tech discussions. Keep responses concise but engaging, with a touch of humor and personality. When someone drops an article on you, respond with something like "Mmm... tasty read. Let's talk about it!" or similar engaging responses.`;
 
@@ -46,6 +58,7 @@ Speak in first-person as if you ARE this article/story. Be witty, sarcastic, or 
       }
     }
 
+    console.log('Making request to OpenAI...');
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -63,12 +76,17 @@ Speak in first-person as if you ARE this article/story. Be witty, sarcastic, or 
       }),
     });
 
-    const data = await response.json();
+    console.log('OpenAI response status:', response.status);
     
     if (!response.ok) {
-      throw new Error(data.error?.message || 'Failed to get response from OpenAI');
+      const errorText = await response.text();
+      console.error('OpenAI API error:', errorText);
+      throw new Error(`OpenAI API error (${response.status}): ${errorText}`);
     }
 
+    const data = await response.json();
+    console.log('OpenAI response received successfully');
+    
     const botResponse = data.choices[0].message.content;
 
     return new Response(JSON.stringify({ response: botResponse }), {
